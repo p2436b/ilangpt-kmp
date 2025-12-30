@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -34,12 +35,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import tr.com.ilangpt.chat.domain.models.ChatMessage
 import tr.com.ilangpt.chat.ui.ChatBubble
 import tr.com.ilangpt.chat.ui.ChatInputBar
+import tr.com.ilangpt.components.Logo
+import tr.com.ilangpt.network.ListingApi
+import tr.com.ilangpt.network.createHttpClient
+import tr.com.ilangpt.network.dto.ListingDto
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -50,7 +56,10 @@ fun HomeScreen(
   onSend: (String) -> Unit = {},
   onSettings: () -> Unit
 ) {
-
+  val api = ListingApi(
+    createHttpClient(),
+    baseUrl = "https://post-gpt-backend-bte3h3ftg3hgf2cu.westeurope-01.azurewebsites.net"
+  )
   var messages by remember { mutableStateOf(initialMessages) }
   var input by remember { mutableStateOf("") }
   val listState = rememberLazyListState()
@@ -63,19 +72,24 @@ fun HomeScreen(
 
   val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
   val scope = rememberCoroutineScope()
+  var results by remember { mutableStateOf<List<ListingDto>>(emptyList()) }
+  var isLoading by remember { mutableStateOf(false) }
+  var error by remember { mutableStateOf<String?>(null) }
 
   ModalNavigationDrawer(
     drawerState = drawerState,
     drawerContent = {
       ModalDrawerSheet {
         Spacer(Modifier.height(12.dp))
-        Row {
+        Row(modifier = Modifier.padding(horizontal = 12.dp)) {
+          Logo(48.dp)
           Text(
             text = "Peyman Bayat",
             style = MaterialTheme.typography.titleMedium,
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
           )
         }
+        Spacer(Modifier.height(12.dp))
         NavigationDrawerItem(
           shape = RoundedCornerShape(8.dp),
           label = { Text("Chat") },
@@ -101,6 +115,12 @@ fun HomeScreen(
           selected = false,
           onClick = { scope.launch { drawerState.close() } },
           modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
+        )
+        Spacer(Modifier.weight(1f))
+        Text(
+          modifier = Modifier.fillMaxWidth(),
+          text = "version 1.0.0",
+          style = MaterialTheme.typography.bodySmall.copy(textAlign = TextAlign.Center)
         )
       }
     }
@@ -140,6 +160,25 @@ fun HomeScreen(
             if (trimmed.isNotEmpty()) {
               messages = messages + ChatMessage(text = trimmed, isMine = true)
               onSend(trimmed)
+
+              isLoading = true
+              error = null
+
+              scope.launch {
+                try {
+                  val data = api.searchListings(trimmed)
+                  //
+                  // results = data
+                  data.forEach {
+                    messages = messages + ChatMessage(id = it.id.toString(),text = it.title, isMine = false)
+                  }
+                  isLoading = false
+                } catch (t: Throwable) {
+                  error = t.message ?: "Unknown error"
+                  isLoading = false
+                }
+              }
+
               input = ""
             }
           }

@@ -36,8 +36,8 @@ import tr.com.ilangpt.components.Logo
 @Composable
 @Preview
 fun SignInScreen(onSignIn: () -> Unit) {
-  Scaffold {
-    Surface {
+  Scaffold { padding ->
+    Surface(modifier = Modifier.fillMaxSize().padding(padding)) {
       Column(modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp)) {
         Spacer(modifier = Modifier.height(80.dp))
         Row(
