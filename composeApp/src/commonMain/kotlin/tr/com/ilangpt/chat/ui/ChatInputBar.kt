@@ -5,21 +5,27 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.platform.LocalFocusManager
+import ilangpt.composeapp.generated.resources.Res
+import ilangpt.composeapp.generated.resources.search_anything
+import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
-public fun ChatInputBar(
+@Preview
+fun ChatInputBar(
     value: String,
     onValueChange: (String) -> Unit,
     onSendClick: () -> Unit
@@ -29,15 +35,16 @@ public fun ChatInputBar(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 10.dp, vertical = 8.dp),
+                .padding(horizontal = 16.dp, vertical = 16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            TextField(
+            OutlinedTextField(
                 modifier = Modifier.weight(1f),
                 value = value,
                 onValueChange = onValueChange,
-                placeholder = { Text("Message") },
+                placeholder = { Text(stringResource(Res.string.search_anything)) },
                 maxLines = 5,
+                shape = RoundedCornerShape(16.dp),
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
                 keyboardActions = KeyboardActions(onSend = {
                     onSendClick()

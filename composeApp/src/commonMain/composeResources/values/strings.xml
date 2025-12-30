@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">ilanGPT</string>
+    <string name="welcome">Welcome to ilanGPT</string>
+    <string name="what_can_you_do">What can you do?</string>
+    <string name="real_estate">Real Estate</string>
+    <string name="real_estate_description">Easily discover all listings, from apartments for sale or rent to luxury villas, from land to commercial properties. Achieve your dream with AI-powered recommendations.</string>
+    <string name="car">Car</string>
+    <string name="car_description">From used cars to brand new vehicles, commercial vehicles, and more, find everything you need in one place. Filter by brand to quickly find the best options.</string>
+    <string name="footer">By continuing, you agree to our Terms and acknowledge that you have read our privacy policy.</string>
+    <string name="continue">Continue</string>
+    <string name="sign_in_title">Ideas, advice and more in a single conversation!</string>
+    <string name="continue_with_google">Continue with Google</string>
+    <string name="continue_with_apple">Continue with Apple</string>
+    <string name="search_anything">Search anything...</string>
+    <string name="settings">Settings</string>
+    <string name="new_chat">New chat</string>
+    <string name="open_drawer">Open drawer</string>
+    <string name="close_drawer">Close drawer</string>
+    <string name="chat_history">Chat history</string>
+</resources>
