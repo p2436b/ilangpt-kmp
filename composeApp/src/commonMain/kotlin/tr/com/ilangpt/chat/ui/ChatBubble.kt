@@ -18,60 +18,60 @@ import kotlin.time.Instant
 
 @Composable
 public fun ChatBubble(message: ChatMessage) {
-    val align = if (message.isMine) Alignment.End else Alignment.Start
+  val align = if (message.isMine) Alignment.End else Alignment.Start
 
-    Column(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalAlignment = align
-    ) {
-        if (!message.isMine && !message.senderName.isNullOrBlank()) {
-            Text(
-                text = message.senderName,
-                style = MaterialTheme.typography.labelSmall,
-                modifier = Modifier.padding(horizontal = 6.dp)
-            )
-            Spacer(Modifier.height(2.dp))
-        }
-
-        val bg = if (message.isMine)
-            MaterialTheme.colorScheme.primary
-        else
-            MaterialTheme.colorScheme.surfaceVariant
-
-        val fg = if (message.isMine)
-            MaterialTheme.colorScheme.onPrimary
-        else
-            MaterialTheme.colorScheme.onSurfaceVariant
-
-        Surface(
-            color = bg,
-            shape = RoundedCornerShape(
-                topStart = 18.dp, topEnd = 18.dp,
-                bottomStart = if (message.isMine) 18.dp else 6.dp,
-                bottomEnd = if (message.isMine) 6.dp else 18.dp
-            )
-        ) {
-            Column(Modifier.padding(horizontal = 12.dp, vertical = 8.dp)) {
-                Text(message.text, color = fg)
-                Spacer(Modifier.height(4.dp))
-                Text(
-                    text = formatTime(message.timestampMillis),
-                    style = MaterialTheme.typography.labelSmall,
-                    color = fg.copy(alpha = 0.75f),
-                    modifier = Modifier.align(Alignment.End)
-                )
-            }
-        }
+  Column(
+    modifier = Modifier.fillMaxWidth(),
+    horizontalAlignment = align
+  ) {
+    if (!message.isMine && !message.senderName.isNullOrBlank()) {
+      Text(
+        text = message.senderName,
+        style = MaterialTheme.typography.labelSmall,
+        modifier = Modifier.padding(horizontal = 6.dp)
+      )
+      Spacer(Modifier.height(2.dp))
     }
+
+    val bg = if (message.isMine)
+      MaterialTheme.colorScheme.primary
+    else
+      MaterialTheme.colorScheme.surfaceVariant
+
+    val fg = if (message.isMine)
+      MaterialTheme.colorScheme.onPrimary
+    else
+      MaterialTheme.colorScheme.onSurfaceVariant
+
+    Surface(
+      color = bg,
+      shape = RoundedCornerShape(
+        topStart = 18.dp, topEnd = 18.dp,
+        bottomStart = if (message.isMine) 18.dp else 6.dp,
+        bottomEnd = if (message.isMine) 6.dp else 18.dp
+      )
+    ) {
+      Column(Modifier.padding(horizontal = 12.dp, vertical = 8.dp)) {
+        Text(message.text, color = fg)
+        Spacer(Modifier.height(4.dp))
+        Text(
+          text = formatTime(message.timestampMillis),
+          style = MaterialTheme.typography.labelSmall,
+          color = fg.copy(alpha = 0.75f),
+          modifier = Modifier.align(Alignment.End)
+        )
+      }
+    }
+  }
 }
 
 private fun formatTime(timestampMillis: Long): String {
-    val seconds = Instant
-        .fromEpochMilliseconds(timestampMillis)
-        .epochSeconds % 86_400
+  val seconds = Instant
+    .fromEpochMilliseconds(timestampMillis)
+    .epochSeconds % 86_400
 
-    val h = (seconds / 3600).toString().padStart(2, '0')
-    val m = ((seconds % 3600) / 60).toString().padStart(2, '0')
+  val h = (seconds / 3600).toString().padStart(2, '0')
+  val m = ((seconds % 3600) / 60).toString().padStart(2, '0')
 
-    return "$h:$m"
+  return "$h:$m"
 }

@@ -26,41 +26,41 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 @Composable
 @Preview
 fun ChatInputBar(
-    value: String,
-    onValueChange: (String) -> Unit,
-    onSendClick: () -> Unit
+  value: String,
+  onValueChange: (String) -> Unit,
+  onSendClick: () -> Unit
 ) {
-    val focusManager = LocalFocusManager.current
-    Surface {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 16.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            OutlinedTextField(
-                modifier = Modifier.weight(1f),
-                value = value,
-                onValueChange = onValueChange,
-                placeholder = { Text(stringResource(Res.string.search_anything)) },
-                maxLines = 5,
-                shape = RoundedCornerShape(16.dp),
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
-                keyboardActions = KeyboardActions(onSend = {
-                    onSendClick()
-                    focusManager.clearFocus()
-                })
-            )
-            Spacer(Modifier.width(8.dp))
-            Button(
-                onClick = {
-                    onSendClick()
-                    focusManager.clearFocus()
-                },
-                enabled = value.trim().isNotEmpty()
-            ) {
-                Text("Send")
-            }
-        }
+  val focusManager = LocalFocusManager.current
+  Surface {
+    Row(
+      modifier = Modifier
+        .fillMaxWidth()
+        .padding(horizontal = 16.dp, vertical = 16.dp),
+      verticalAlignment = Alignment.CenterVertically
+    ) {
+      OutlinedTextField(
+        modifier = Modifier.weight(1f),
+        value = value,
+        onValueChange = onValueChange,
+        placeholder = { Text(stringResource(Res.string.search_anything)) },
+        maxLines = 5,
+        shape = RoundedCornerShape(16.dp),
+        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
+        keyboardActions = KeyboardActions(onSend = {
+          onSendClick()
+          focusManager.clearFocus()
+        })
+      )
+      Spacer(Modifier.width(8.dp))
+      Button(
+        onClick = {
+          onSendClick()
+          focusManager.clearFocus()
+        },
+        enabled = value.trim().isNotEmpty()
+      ) {
+        Text("Send")
+      }
     }
+  }
 }

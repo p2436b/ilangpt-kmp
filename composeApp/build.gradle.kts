@@ -5,6 +5,7 @@ plugins {
   alias(libs.plugins.androidApplication)
   alias(libs.plugins.composeMultiplatform)
   alias(libs.plugins.composeCompiler)
+  alias(libs.plugins.kotlinSerialization)
 }
 
 kotlin {
@@ -40,11 +41,10 @@ kotlin {
       implementation(libs.androidx.lifecycle.runtimeCompose)
       implementation(libs.kotlinx.datetime)
       implementation(compose.materialIconsExtended)
-      implementation(libs.voyager.navigator)
-      implementation(libs.voyager.screenmodel)
-      implementation(libs.voyager.transitions)
-      implementation(libs.voyager.koin)
       implementation(libs.koin.core)
+      implementation(libs.navigation.compose)
+      implementation(libs.kotlinx.serialization.core)
+
     }
     commonTest.dependencies {
       implementation(libs.kotlin.test)
