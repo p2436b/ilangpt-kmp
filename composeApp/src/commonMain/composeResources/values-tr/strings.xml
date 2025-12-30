@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">ilanGPT</string>
+    <string name="welcome">ilanGPT’ye Hoş Geldiniz</string>
+    <string name="what_can_you_do">Neler Yapabilirsiniz?</string>
+    <string name="real_estate">Emlak</string>
+    <string name="real_estate_description">Satılık veya kiralık dairelerden lüks villalara, arsadan ticari gayrimenkullere kadar tüm ilanları kolayca keşfedin. Yapay zekâ destekli önerilerle hayallerinize ulaşın.</string>
+    <string name="car">Araç</string>
+    <string name="car_description">İkinci el araçlardan sıfır otomobillere, ticari araçlara ve daha fazlasına kadar ihtiyacınız olan her şeyi tek bir yerde bulun. Marka filtreleriyle en iyi seçenekleri hızlıca keşfedin.</string>
+    <string name="footer">Devam ederek Şartlarımızı kabul ettiğinizi ve gizlilik politikamızı okuduğunuzu onaylamış olursunuz.</string>
+    <string name="continue">Devam Et</string>
+    <string name="sign_in_title">Fikirler, tavsiyeler ve daha fazlası tek bir sohbet içinde!</string>
+    <string name="continue_with_google">Google ile Devam Et</string>
+    <string name="continue_with_apple">Apple ile Devam Et</string>
+    <string name="search_anything">Her şeyi ara...</string>
+    <string name="settings">Ayarlar</string>
+    <string name="new_chat">Yeni sohbet</string>
+    <string name="open_drawer">Menüyü aç</string>
+    <string name="close_drawer">Menüyü kapat</string>
+    <string name="chat_history">Sohbet geçmişi</string>
+</resources>
