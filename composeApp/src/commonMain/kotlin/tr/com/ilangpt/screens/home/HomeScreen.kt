@@ -29,6 +29,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -38,7 +39,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.launch
+import org.koin.compose.currentKoinScope
+import org.koin.compose.koinInject
 import tr.com.ilangpt.chat.domain.models.ChatMessage
 import tr.com.ilangpt.chat.ui.ChatBubble
 import tr.com.ilangpt.chat.ui.ChatInputBar
@@ -50,18 +55,21 @@ import tr.com.ilangpt.network.dto.ListingDto
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-  title: String = "Chat",
-  initialMessages: List<ChatMessage> = emptyList(),
+  title: String = "",
   onBack: (() -> Unit)? = null,
   onSend: (String) -> Unit = {},
-  onSettings: () -> Unit
+  onSettings: () -> Unit,
+  onTermsOfUse: () -> Unit,
+  onPrivacyPolicy: () -> Unit
 ) {
   val api = ListingApi(
     createHttpClient(),
     baseUrl = "https://post-gpt-backend-bte3h3ftg3hgf2cu.westeurope-01.azurewebsites.net"
   )
-  var messages by remember { mutableStateOf(initialMessages) }
-  var input by remember { mutableStateOf("") }
+
+  val viewModel = koinViewModel<HomeViewModel>();
+  val messages by viewModel.messages.collectAsState();
+  val input by viewModel.input.collectAsState()
   val listState = rememberLazyListState()
 
   LaunchedEffect(messages.size) {
@@ -95,6 +103,30 @@ fun HomeScreen(
           label = { Text("Chat") },
           selected = true,
           onClick = { scope.launch { drawerState.close() } },
+          modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
+        )
+
+        NavigationDrawerItem(
+          label = { Text("Terms of use") },
+          selected = false,
+          onClick = {
+            scope.launch {
+              drawerState.close()
+              onTermsOfUse()
+            }
+          },
+          modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
+        )
+
+        NavigationDrawerItem(
+          label = { Text("Privacy policy") },
+          selected = false,
+          onClick = {
+            scope.launch {
+              drawerState.close()
+              onPrivacyPolicy()
+            }
+          },
           modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
         )
 
@@ -141,7 +173,7 @@ fun HomeScreen(
           },
           actions = {
             IconButton(
-              onClick = { }
+              onClick = { viewModel.clearMessages() }
             ) {
               Icon(
                 imageVector = Icons.Outlined.AddCircle,
@@ -154,23 +186,35 @@ fun HomeScreen(
       bottomBar = {
         ChatInputBar(
           value = input,
-          onValueChange = { input = it },
+          onValueChange = { viewModel.updateInput(it) },
           onSendClick = {
             val trimmed = input.trim()
             if (trimmed.isNotEmpty()) {
-              messages = messages + ChatMessage(text = trimmed, isMine = true)
+              viewModel.updateMessages(ChatMessage(title = trimmed, isMine = true))
               onSend(trimmed)
-
               isLoading = true
               error = null
 
               scope.launch {
                 try {
                   val data = api.searchListings(trimmed)
-                  //
-                  // results = data
                   data.forEach {
-                    messages = messages + ChatMessage(id = it.id.toString(),text = it.title, isMine = false)
+                    viewModel.updateMessages(
+                      ChatMessage(
+                        id = it.id.toString(),
+                        title = it.title,
+                        url = it.url,
+                        coverImage = it.coverImage,
+                        websiteName = it.websiteName,
+                        city = it.city,
+                        district = it.district,
+                        neighborhood = it.neighborhood,
+                        listingType = it.listingType,
+                        categoryPath = it.categoryPath,
+                        score = it.score,
+                        isMine = false
+                      )
+                    )
                   }
                   isLoading = false
                 } catch (t: Throwable) {
@@ -179,7 +223,7 @@ fun HomeScreen(
                 }
               }
 
-              input = ""
+              viewModel.updateInput("")
             }
           }
         )
@@ -198,5 +242,13 @@ fun HomeScreen(
         }
       }
     }
+  }
+}
+
+@Composable
+inline fun <reified T: ViewModel> koinViewModel():T{
+  val scope= currentKoinScope()
+  return viewModel {
+    scope.get<T>()
   }
 }

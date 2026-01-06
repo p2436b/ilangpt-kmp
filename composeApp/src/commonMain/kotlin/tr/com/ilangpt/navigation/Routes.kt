@@ -15,6 +15,12 @@ object HomeRoute
 @Serializable
 object SettingsRoute
 
+@Serializable
+object TermsOfUseRoute
+
+@Serializable
+object PrivacyPolicyRoute
+
 
 //@Serializable
 //data class DetailsRoute(val id: String)
