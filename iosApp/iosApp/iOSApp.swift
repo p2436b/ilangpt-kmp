@@ -1,5 +1,4 @@
 import SwiftUI
-import shared
 import GoogleSignIn
 
 class AppDelegate: NSObject, UIApplicationDelegate {
