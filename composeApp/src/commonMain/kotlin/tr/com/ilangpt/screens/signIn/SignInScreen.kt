@@ -109,8 +109,13 @@ fun SignInScreen(onSignIn: () -> Unit, prefs: DataStore<Preferences>) {
         Spacer(modifier = Modifier.height(24.dp))
         AppButton(modifier = Modifier.fillMaxWidth(), onClick = {
             AppleSignIn.signIn(
-                onSuccess = {
-                    println("Apple user: $it")
+                onSuccess = { user->
+                    scope.launch {
+                        prefs.edit {
+                            it[stringPreferencesKey("token")] = user.id
+                        }
+                    }
+                    println("Apple user: $user")
                 },
                 onError = {
                     println("Apple Sign-In failed: ${it.message}")

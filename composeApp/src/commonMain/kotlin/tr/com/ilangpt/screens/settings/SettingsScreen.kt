@@ -18,14 +18,21 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.stringPreferencesKey
+import kotlinx.coroutines.launch
 
 @Composable
-fun SettingsScreen() {
+fun SettingsScreen(prefs: DataStore<Preferences>) {
+    val scope = rememberCoroutineScope()
   Scaffold { padding ->
     Surface(modifier = Modifier.fillMaxSize().padding(padding)) {
       LazyColumn(
@@ -65,7 +72,13 @@ fun SettingsScreen() {
           SettingsSection(title = "Account") {
             SettingsRow(
               title = "Sign Out",
-              onClick = { /* handle sign out */ },
+              onClick = {
+                  scope.launch {
+                  prefs.edit {
+                      it[stringPreferencesKey("token")] = ""
+                  }
+                  }
+              },
               textColor = Color.Red
             )
           }
