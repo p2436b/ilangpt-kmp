@@ -1,9 +1,12 @@
 package tr.com.ilangpt.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import tr.com.ilangpt.screens.home.HomeScreen
 import tr.com.ilangpt.screens.onboarding.OnboardingScreen
 import tr.com.ilangpt.screens.privacy.PrivacyPolicyScreen
@@ -13,20 +16,12 @@ import tr.com.ilangpt.screens.terms.TermsOfUseScreen
 
 
 @Composable
-fun AppNavHost(navController: NavHostController) {
+fun MainNavHost(prefs: DataStore<Preferences>) {
+  val navController = rememberNavController()
   NavHost(
     navController = navController,
-    startDestination = OnboardingRoute
+    startDestination = HomeRoute
   ) {
-    composable<OnboardingRoute> { OnboardingScreen(onContinue = { navController.navigate(SignInRoute) }) }
-    composable<SignInRoute> {
-      SignInScreen(onSignIn = {
-        navController.navigate(HomeRoute) {
-          // If you don't want onboarding in back stack
-          popUpTo(OnboardingRoute) { inclusive = true }
-        }
-      })
-    }
     composable<HomeRoute> {
       HomeScreen(
         onSettings = { navController.navigate(SettingsRoute) },
@@ -34,10 +29,8 @@ fun AppNavHost(navController: NavHostController) {
         onPrivacyPolicy = { navController.navigate(PrivacyPolicyRoute) }
       )
     }
-
     composable<TermsOfUseRoute> { backStackEntry -> TermsOfUseScreen() }
     composable<PrivacyPolicyRoute> { backStackEntry -> PrivacyPolicyScreen() }
     composable<SettingsRoute> { backStackEntry -> SettingsScreen() }
   }
-
 }

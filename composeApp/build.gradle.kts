@@ -57,6 +57,12 @@ kotlin {
       implementation(libs.koin.compose)
       implementation(libs.koin.compose.viewmodel)
       implementation(libs.koin.core.viewmodel)
+
+      implementation(libs.kmpauth.google)
+      implementation(libs.kmpauth.uihelper)
+
+      implementation(libs.androidx.datastore)
+      implementation(libs.androidx.datastore.preferences)
     }
   }
 }
@@ -64,6 +70,15 @@ kotlin {
 android {
   namespace = "tr.com.ilangpt"
   compileSdk = libs.versions.android.compileSdk.get().toInt()
+
+  signingConfigs {
+    create("release") {
+      storeFile = file("composeApp/src/androidMain/keystore/release.keystore")
+      storePassword = "postgpt"
+      keyAlias = "mulkiyet"
+      keyPassword = "postgpt"
+    }
+  }
 
   defaultConfig {
     applicationId = "tr.com.ilangpt"
@@ -79,6 +94,7 @@ android {
   }
   buildTypes {
     getByName("release") {
+      signingConfig = signingConfigs.getByName("release")
       isMinifyEnabled = false
     }
   }
