@@ -108,7 +108,14 @@ fun SignInScreen(onSignIn: () -> Unit, prefs: DataStore<Preferences>) {
         }
         Spacer(modifier = Modifier.height(24.dp))
         AppButton(modifier = Modifier.fillMaxWidth(), onClick = {
-          onSignIn()
+            AppleSignIn.signIn(
+                onSuccess = {
+                    println("Apple user: $it")
+                },
+                onError = {
+                    println("Apple Sign-In failed: ${it.message}")
+                }
+            )
         }) {
           Image(
             painter = painterResource(Res.drawable.apple_logo),
