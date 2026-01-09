@@ -1,5 +1,6 @@
 import SwiftUI
 import GoogleSignIn
+import ComposeApp
 
 class AppDelegate: NSObject, UIApplicationDelegate {
 
@@ -23,6 +24,9 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 
 @main
 struct iOSApp: App {
+    init(){
+        InitKoinKt.doInitKoin()
+    }
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
 
     var body: some Scene {

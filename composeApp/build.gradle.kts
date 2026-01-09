@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 
 plugins {
   alias(libs.plugins.kotlinMultiplatform)
@@ -6,6 +7,7 @@ plugins {
   alias(libs.plugins.composeMultiplatform)
   alias(libs.plugins.composeCompiler)
   alias(libs.plugins.kotlinSerialization)
+  alias(libs.plugins.ksp)
 }
 
 kotlin {
@@ -56,6 +58,7 @@ kotlin {
       api(libs.koin.core)
       implementation(libs.koin.compose)
       implementation(libs.koin.compose.viewmodel)
+      implementation(libs.koin.compose.viewmodel.navigation)
       implementation(libs.koin.core.viewmodel)
 
       implementation(libs.kmpauth.google)
@@ -63,8 +66,29 @@ kotlin {
 
       implementation(libs.androidx.datastore)
       implementation(libs.androidx.datastore.preferences)
+
+      api(libs.koin.annotations)
     }
   }
+
+  sourceSets.named("commonMain").configure {
+    kotlin.srcDir("build/generated/ksp/metadata/commonMain/kotlin")
+  }
+}
+
+ksp {
+  arg("KOIN_USE_COMPOSE_VIEWMODEL", "true")
+  arg("KOIN_CONFIG_CHECK", "true")
+}
+
+project.tasks.withType(KotlinCompilationTask::class.java).configureEach {
+  if (name != "kspCommonMainKotlinMetadata") {
+    dependsOn("kspCommonMainKotlinMetadata")
+  }
+}
+
+dependencies {
+  add("kspCommonMainMetadata", libs.koin.ksp.compiler)
 }
 
 android {

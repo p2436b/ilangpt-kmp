@@ -1,11 +1,14 @@
 package tr.com.ilangpt
 
-import KoinInitializer
 import android.app.Application
+import org.koin.android.ext.koin.androidContext
+import tr.com.ilangpt.di.initKoin
 
-class TheApp: Application() {
+class TheApp : Application() {
   override fun onCreate() {
     super.onCreate()
-    KoinInitializer(applicationContext).init()
+    initKoin {
+      androidContext(this@TheApp)
+    }
   }
 }
