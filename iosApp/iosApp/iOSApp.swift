@@ -3,22 +3,22 @@ import GoogleSignIn
 import ComposeApp
 
 class AppDelegate: NSObject, UIApplicationDelegate {
-
+    
     func application(
-      _ app: UIApplication,
-      open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]
+        _ app: UIApplication,
+        open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]
     ) -> Bool {
-      var handled: Bool
-
-      handled = GIDSignIn.sharedInstance.handle(url)
-      if handled {
-        return true
-      }
-
-      // Handle other custom URL types.
-
-      // If not handled by this app, return false.
-      return false
+        var handled: Bool
+        
+        handled = GIDSignIn.sharedInstance.handle(url)
+        if handled {
+            return true
+        }
+        
+        // Handle other custom URL types.
+        
+        // If not handled by this app, return false.
+        return false
     }
 }
 
@@ -28,12 +28,12 @@ struct iOSApp: App {
         InitKoinKt.doInitKoin()
     }
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
-
+    
     var body: some Scene {
         WindowGroup {
             ContentView().onOpenURL(perform: { url in
-                            GIDSignIn.sharedInstance.handle(url)
-                        })
+                GIDSignIn.sharedInstance.handle(url)
+            })
         }
     }
 }
