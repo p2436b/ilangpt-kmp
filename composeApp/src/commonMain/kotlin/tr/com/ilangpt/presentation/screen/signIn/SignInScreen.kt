@@ -41,6 +41,8 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.koinInject
+import org.koin.compose.viewmodel.koinViewModel
+import tr.com.ilangpt.data.dto.UserDto
 import tr.com.ilangpt.domain.repository.PreferencesRepository
 import tr.com.ilangpt.platform.AppleSignIn
 import tr.com.ilangpt.presentation.component.Logo
@@ -48,7 +50,11 @@ import tr.com.ilangpt.presentation.component.PrimaryButton
 
 @Composable
 @Preview
-fun SignInScreen(onSignIn: (token: String) -> Unit, prefs: PreferencesRepository = koinInject()) {
+fun SignInScreen(
+  onSignIn: (token: String) -> Unit,
+  prefs: PreferencesRepository = koinInject(),
+  viewModel: SignInViewModel = koinViewModel()
+) {
 
   var authReady by remember { mutableStateOf(false) }
   val scope = rememberCoroutineScope()
@@ -81,8 +87,21 @@ fun SignInScreen(onSignIn: (token: String) -> Unit, prefs: PreferencesRepository
         )
         Spacer(modifier = Modifier.weight(1f))
         if (authReady) {
-          GoogleButtonUiContainer(onGoogleSignInResult = { gu ->
-            val tokenId = gu?.idToken
+          GoogleButtonUiContainer(onGoogleSignInResult = { googleUser ->
+            if (googleUser == null) return@GoogleButtonUiContainer
+
+            viewModel.upsertUser(
+              UserDto(
+                provider = 1,
+                email = googleUser.email!!,
+                pictureUrl = googleUser.profilePicUrl,
+                accessToken = googleUser.accessToken,
+                idToken = googleUser.idToken,
+                displayName = googleUser.displayName,
+                rawProfileJson = "{}"
+              )
+            )
+            val tokenId = googleUser?.idToken
             if (tokenId != null) {
               scope.launch {
                 prefs.saveToken(tokenId)

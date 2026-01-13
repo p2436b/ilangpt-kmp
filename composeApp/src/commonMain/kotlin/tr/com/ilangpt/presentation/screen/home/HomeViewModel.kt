@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import tr.com.ilangpt.data.dto.UserDto
 import tr.com.ilangpt.domain.model.ChatMessage
 import tr.com.ilangpt.domain.model.User
 import tr.com.ilangpt.domain.repository.UserRepository
@@ -18,7 +19,13 @@ class HomeViewModel(private val userRepository: UserRepository) : ViewModel() {
 
   init {
     viewModelScope.launch {
-      user.value = userRepository.getUser("id12345")
+      val u = userRepository.upsertUser(
+        UserDto(
+          provider = 1,
+          email = "p2436b@gmail.com"
+        )
+      )
+      val dn = u?.displayName
     }
   }
 

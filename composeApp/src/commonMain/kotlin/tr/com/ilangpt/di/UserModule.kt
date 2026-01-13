@@ -7,6 +7,7 @@ import org.koin.core.annotation.Module
 import tr.com.ilangpt.data.repository.UserRepositoryImpl
 import tr.com.ilangpt.domain.repository.UserRepository
 import tr.com.ilangpt.presentation.screen.home.HomeViewModel
+import tr.com.ilangpt.presentation.screen.signIn.SignInViewModel
 
 @Module(
   includes = [AppModule::class]
@@ -17,4 +18,7 @@ class UserModule {
 
   @KoinViewModel
   fun homeViewModel(userRepository: UserRepository) = HomeViewModel(userRepository)
+
+  @KoinViewModel
+  fun signViewModel(userRepository: UserRepository) = SignInViewModel(userRepository)
 }

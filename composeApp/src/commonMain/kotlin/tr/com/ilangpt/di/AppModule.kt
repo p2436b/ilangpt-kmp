@@ -4,6 +4,13 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.HttpClientEngine
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.plugins.defaultRequest
+import io.ktor.client.request.accept
+import io.ktor.http.ContentType
+import io.ktor.http.contentType
+import io.ktor.serialization.kotlinx.json.json
+import kotlinx.serialization.json.Json
 import org.koin.android.annotation.KoinViewModel
 import org.koin.core.annotation.Factory
 import org.koin.core.annotation.Module
@@ -18,7 +25,23 @@ import tr.com.ilangpt.domain.repository.PreferencesRepository
 @Module
 class AppModule {
   @Single
-  fun httpClient(engine: HttpClientEngine) = HttpClient(engine)
+  fun httpClient(engine: HttpClientEngine) = HttpClient(engine) {
+
+    install(ContentNegotiation) {
+      json(
+        Json {
+          ignoreUnknownKeys = true
+          explicitNulls = false
+        }
+      )
+    }
+
+    defaultRequest {
+      url("https://post-gpt-backend-bte3h3ftg3hgf2cu.westeurope-01.azurewebsites.net/")
+      contentType(ContentType.Application.Json)
+      accept(ContentType.Application.Json)
+    }
+  }
 
   @Single
   fun dataSource(engine: HttpClientEngine) = createDataStore()

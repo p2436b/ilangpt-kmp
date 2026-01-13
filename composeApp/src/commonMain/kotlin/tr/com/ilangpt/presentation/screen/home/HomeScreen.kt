@@ -89,7 +89,7 @@ fun HomeScreen(
         Row(modifier = Modifier.padding(horizontal = 12.dp)) {
           Logo(48.dp)
           Text(
-            text = user?.name ?: "No name",
+            text = user?.displayName ?: "No name",
             style = MaterialTheme.typography.titleMedium,
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
           )
