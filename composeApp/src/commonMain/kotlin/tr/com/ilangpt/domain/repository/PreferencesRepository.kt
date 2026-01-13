@@ -1,10 +1,9 @@
 package tr.com.ilangpt.domain.repository
 
-import kotlinx.coroutines.flow.Flow
-import tr.com.ilangpt.domain.model.AuthState
+import tr.com.ilangpt.domain.model.User
 
 interface PreferencesRepository {
-  val authState: Flow<AuthState>
-  suspend fun saveToken(token: String)
-  suspend fun clearToken()
+  suspend fun getUser(): User?
+  suspend fun saveUser(user: User)
+  suspend fun clearUser()
 }

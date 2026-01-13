@@ -24,14 +24,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.launch
-import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
-import tr.com.ilangpt.AppViewModel
-import tr.com.ilangpt.domain.repository.PreferencesRepository
 
 @Composable
-fun SettingsScreen(prefs: PreferencesRepository = koinInject(), appViewModel: AppViewModel= koinViewModel()) {
+fun SettingsScreen(viewModel: SettingsViewModel = koinViewModel()) {
   val scope = rememberCoroutineScope()
   Scaffold { padding ->
     Surface(modifier = Modifier.fillMaxSize().padding(padding)) {
@@ -72,11 +68,7 @@ fun SettingsScreen(prefs: PreferencesRepository = koinInject(), appViewModel: Ap
           SettingsSection(title = "Account") {
             SettingsRow(
               title = "Sign Out",
-              onClick = {
-                scope.launch {
-                  prefs.clearToken()
-                }
-              },
+              onClick = { viewModel.signOut() },
               textColor = Color.Red
             )
           }

@@ -16,6 +16,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -45,6 +46,8 @@ import org.koin.compose.viewmodel.koinViewModel
 import tr.com.ilangpt.data.dto.UserDto
 import tr.com.ilangpt.domain.repository.PreferencesRepository
 import tr.com.ilangpt.platform.AppleSignIn
+import tr.com.ilangpt.platform.Platform
+import tr.com.ilangpt.platform.getPlatform
 import tr.com.ilangpt.presentation.component.Logo
 import tr.com.ilangpt.presentation.component.PrimaryButton
 
@@ -52,12 +55,12 @@ import tr.com.ilangpt.presentation.component.PrimaryButton
 @Preview
 fun SignInScreen(
   onSignIn: (token: String) -> Unit,
-  prefs: PreferencesRepository = koinInject(),
   viewModel: SignInViewModel = koinViewModel()
 ) {
 
   var authReady by remember { mutableStateOf(false) }
   val scope = rememberCoroutineScope()
+
   LaunchedEffect(Unit) {
     val g = GoogleAuthProvider.create(
       credentials = GoogleAuthCredentials(
@@ -101,15 +104,8 @@ fun SignInScreen(
                 rawProfileJson = "{}"
               )
             )
-            val tokenId = googleUser?.idToken
-            if (tokenId != null) {
-              scope.launch {
-                prefs.saveToken(tokenId)
-              }
-              onSignIn(tokenId)
-            }
+            onSignIn(googleUser.idToken)
           }) {
-            //GoogleSignInButton(onClick = { this.onClick() })
             PrimaryButton(modifier = Modifier.fillMaxWidth(), onClick = {
               this.onClick()
             }) {
@@ -122,26 +118,28 @@ fun SignInScreen(
             }
           }
         }
-        Spacer(modifier = Modifier.height(24.dp))
-        PrimaryButton(modifier = Modifier.fillMaxWidth(), onClick = {
-          AppleSignIn.signIn(
-            onSuccess = { user ->
-              scope.launch {
-                prefs.saveToken(user.id)
+        if (getPlatform() == Platform.IOS) {
+          Spacer(modifier = Modifier.height(24.dp))
+          PrimaryButton(modifier = Modifier.fillMaxWidth(), onClick = {
+            AppleSignIn.signIn(
+              onSuccess = { user ->
+                scope.launch {
+                  //prefs.saveToken(user.id)
+                }
+                println("Apple user: $user")
+              },
+              onError = {
+                println("Apple Sign-In failed: ${it.message}")
               }
-              println("Apple user: $user")
-            },
-            onError = {
-              println("Apple Sign-In failed: ${it.message}")
-            }
-          )
-        }) {
-          Image(
-            painter = painterResource(Res.drawable.apple_logo),
-            contentDescription = "Apple logo"
-          )
-          Spacer(modifier = Modifier.width(8.dp))
-          Text(stringResource(Res.string.continue_with_apple))
+            )
+          }) {
+            Image(
+              painter = painterResource(Res.drawable.apple_logo),
+              contentDescription = "Apple logo"
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(stringResource(Res.string.continue_with_apple))
+          }
         }
         Spacer(modifier = Modifier.height(24.dp))
         Text(
