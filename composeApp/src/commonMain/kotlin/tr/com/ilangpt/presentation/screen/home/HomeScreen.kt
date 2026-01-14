@@ -99,6 +99,7 @@ fun HomeScreen(
       },
       bottomBar = {
         ChatInputBar(
+          modifier = Modifier.padding(16.dp),
           value = searchQuery,
           onValueChange = { viewModel.updateSearchQuery(it) },
           onSendClick = { viewModel.onSendQuery() }
@@ -109,7 +110,7 @@ fun HomeScreen(
         modifier = Modifier
           .fillMaxSize()
           .padding(padding)
-          .padding(horizontal = 12.dp, vertical = 12.dp)
+          .padding(12.dp)
           .pointerInput(Unit) {
             detectTapGestures(
               onTap = {
