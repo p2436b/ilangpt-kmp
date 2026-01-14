@@ -7,6 +7,7 @@ import androidx.navigation.compose.navigation
 import kotlinx.serialization.Serializable
 import tr.com.ilangpt.presentation.screen.home.HomeScreen
 import tr.com.ilangpt.presentation.screen.privacy.PrivacyPolicyScreen
+import tr.com.ilangpt.presentation.screen.profile.ProfileScreen
 import tr.com.ilangpt.presentation.screen.settings.SettingsScreen
 import tr.com.ilangpt.presentation.screen.terms.TermsOfUseScreen
 
@@ -20,12 +21,17 @@ fun NavGraphBuilder.mainGraph(
     composable<HomeRoute> {
       HomeScreen(
         onSettings = { navController.navigate(SettingsRoute) },
-        onTermsOfUse = { navController.navigate(TermsOfUseRoute) },
-        onPrivacyPolicy = { navController.navigate(PrivacyPolicyRoute) }
+        onProfile = { navController.navigate(ProfileRoute) }
       )
     }
     composable<TermsOfUseRoute> { backStackEntry -> TermsOfUseScreen() }
     composable<PrivacyPolicyRoute> { backStackEntry -> PrivacyPolicyScreen() }
     composable<SettingsRoute> { SettingsScreen() }
+    composable<ProfileRoute> {
+      ProfileScreen(
+        onTermsOfUse = { navController.navigate(TermsOfUseRoute) },
+        onPrivacyPolicy = { navController.navigate(PrivacyPolicyRoute) }
+      )
+    }
   }
 }

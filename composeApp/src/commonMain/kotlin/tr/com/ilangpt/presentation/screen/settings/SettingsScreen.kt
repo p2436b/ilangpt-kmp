@@ -59,18 +59,6 @@ fun SettingsScreen(viewModel: SettingsViewModel = koinViewModel()) {
           SettingsSection(title = "About us") {
             SettingsRow(title = "Rate us", onClick = {})
             SettingsRow(title = "Help center", onClick = {})
-            SettingsRow(title = "Terms of use", onClick = {})
-            SettingsRow(title = "Privacy policy", onClick = {})
-          }
-        }
-
-        item {
-          SettingsSection(title = "Account") {
-            SettingsRow(
-              title = "Sign Out",
-              onClick = { viewModel.signOut() },
-              textColor = Color.Red
-            )
           }
         }
       }

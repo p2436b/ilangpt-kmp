@@ -9,8 +9,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,7 +37,7 @@ fun ChatInputBar(
       .padding(horizontal = 16.dp, vertical = 16.dp),
     verticalAlignment = Alignment.CenterVertically
   ) {
-    OutlinedTextField(
+    TextField(
       modifier = Modifier.weight(1f),
       value = value,
       onValueChange = onValueChange,

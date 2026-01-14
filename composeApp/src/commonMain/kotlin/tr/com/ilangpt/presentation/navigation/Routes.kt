@@ -21,6 +21,8 @@ object TermsOfUseRoute
 @Serializable
 object PrivacyPolicyRoute
 
+@Serializable
+object ProfileRoute
 
 //@Serializable
 //data class DetailsRoute(val id: String)
