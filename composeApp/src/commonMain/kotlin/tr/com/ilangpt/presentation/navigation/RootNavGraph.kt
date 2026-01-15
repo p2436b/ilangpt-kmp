@@ -51,7 +51,7 @@ fun RootNavGraph(
     navController = navController,
     startDestination = RootGraph
   ) {
-    composable<RootGraph> { Box(modifier = Modifier.fillMaxSize()) {} }
+    composable<RootGraph> {}
     authGraph(navController)
     mainGraph(
       navController = navController,
