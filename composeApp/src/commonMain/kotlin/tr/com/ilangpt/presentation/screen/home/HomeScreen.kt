@@ -15,14 +15,15 @@ import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
@@ -30,6 +31,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
+import tr.com.ilangpt.domain.model.ChatMessage
 import tr.com.ilangpt.presentation.component.ChatBubble
 import tr.com.ilangpt.presentation.component.ChatInputBar
 
@@ -37,19 +39,39 @@ import tr.com.ilangpt.presentation.component.ChatInputBar
 @Composable
 fun HomeScreen(
   onBack: (() -> Unit)? = null,
-  onSettings: () -> Unit,
-  onProfile: () -> Unit,
-  viewModel: HomeViewModel = koinViewModel()
+  viewModel: HomeViewModel = koinViewModel(),
+  drawerActions: (DrawerActions?) -> Unit,
+  onOpenDrawer: () -> Unit
 ) {
   val focusManager = LocalFocusManager.current
   val messages by viewModel.messages.collectAsState();
-  val filteredListingHistory by viewModel.filteredListingHistory.collectAsState()
   val searchQuery by viewModel.searchQuery.collectAsState()
-  val user by viewModel.user.collectAsState()
   val listState = rememberLazyListState()
-  val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-  val scope = rememberCoroutineScope()
-  val historyQuery by viewModel.historyQuery.collectAsState()
+  val historyQuery = viewModel.historyQuery.collectAsState()
+  val filteredListingHistory = viewModel.filteredListingHistory.collectAsState()
+
+  val actions = remember(viewModel) {
+    object : DrawerActions {
+      override val historyQuery = historyQuery
+      override val filteredListingHistory = filteredListingHistory
+
+      override fun queryHistory(query: String) {
+        viewModel.queryHistory(query)
+      }
+
+      override fun onHistoryItemClick(item: ChatMessage) {
+        println(item.toString())
+      }
+    }
+  }
+
+  LaunchedEffect(Unit) {
+    drawerActions(actions)
+  }
+
+  DisposableEffect(Unit) {
+    onDispose { drawerActions(null) }
+  }
 
   LaunchedEffect(messages.size) {
     if (messages.isNotEmpty()) {
@@ -57,75 +79,55 @@ fun HomeScreen(
     }
   }
 
-//  ModalNavigationDrawer(
-//    drawerState = drawerState,
-//    drawerContent = {
-//      MainDrawerContent(
-//        onSettings = onSettings,
-//        onProfile = onProfile,
-//        historyQuery = historyQuery,
-//        queryHistory = { viewModel.queryHistory(it) },
-//        filteredListingHistory = filteredListingHistory,
-//        onHistoryItemClick = {
-//          scope.launch {
-//            drawerState.close()
-//          }
-//          focusManager.clearFocus()
-//        },
-//        user = user,
-//      )
-//    }
-//  ) {
-    Scaffold(
-      topBar = {
-        TopAppBar(
-          title = {},
-          navigationIcon = {
-            IconButton(onClick = { scope.launch { drawerState.open() } }) {
-              Icon(
-                imageVector = Icons.Outlined.Menu,
-                contentDescription = "Open drawer"
-              )
-            }
-          },
-          actions = {
-            IconButton(onClick = { viewModel.clearMessages() }) {
-              Icon(
-                imageVector = Icons.Outlined.AddCircle,
-                contentDescription = "New chat"
-              )
-            }
-          }
-        )
-      },
-      bottomBar = {
-        ChatInputBar(
-          modifier = Modifier.padding(16.dp),
-          value = searchQuery,
-          onValueChange = { viewModel.updateSearchQuery(it) },
-          onSendClick = { viewModel.onSendQuery() }
-        )
-      }
-    ) { padding ->
-      LazyColumn(
-        modifier = Modifier
-          .fillMaxSize()
-          .padding(padding)
-          .pointerInput(Unit) {
-            detectTapGestures(
-              onTap = {
-                focusManager.clearFocus()
-              }
+  Scaffold(
+    topBar = {
+      TopAppBar(
+        title = {},
+        navigationIcon = {
+          IconButton(onClick = onOpenDrawer) {
+            Icon(
+              imageVector = Icons.Outlined.Menu,
+              contentDescription = "Open drawer"
             )
-          },
-        contentPadding = PaddingValues(16.dp),
-        state = listState,
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-      ) {
-        items(messages, key = { it.id }) { msg ->
-          ChatBubble(msg)
+          }
+        },
+        actions = {
+          IconButton(onClick = { viewModel.clearMessages() }) {
+            Icon(
+              imageVector = Icons.Outlined.AddCircle,
+              contentDescription = "New chat"
+            )
+          }
         }
+      )
+    },
+    bottomBar = {
+      ChatInputBar(
+        modifier = Modifier.padding(16.dp),
+        value = searchQuery,
+        onValueChange = { viewModel.updateSearchQuery(it) },
+        onSendClick = { viewModel.onSendQuery() }
+      )
+    }
+  ) { padding ->
+    LazyColumn(
+      modifier = Modifier
+        .fillMaxSize()
+        .padding(padding)
+        .pointerInput(Unit) {
+          detectTapGestures(
+            onTap = {
+              focusManager.clearFocus()
+            }
+          )
+        },
+      contentPadding = PaddingValues(16.dp),
+      state = listState,
+      verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+      items(messages, key = { it.id }) { msg ->
+        ChatBubble(msg)
       }
     }
-//  }
+  }
 }

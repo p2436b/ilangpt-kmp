@@ -5,17 +5,20 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import kotlinx.serialization.Serializable
 import tr.com.ilangpt.domain.model.AuthState
+import tr.com.ilangpt.presentation.screen.home.DrawerActions
 
 @Serializable
 object RootGraph
 
 @Composable
-fun RootNavGraph(authState: AuthState, navController: NavHostController) {
-
-
+fun RootNavGraph(
+  authState: AuthState,
+  navController: NavHostController,
+  drawerActions: (DrawerActions?) -> Unit,
+  onOpenDrawer: () -> Unit
+) {
   // Global routing based on auth state
   LaunchedEffect(authState) {
     when (authState) {
@@ -39,22 +42,12 @@ fun RootNavGraph(authState: AuthState, navController: NavHostController) {
     navController = navController,
     startDestination = RootGraph
   ) {
-    composable<RootGraph> {
-      // Splash screen
-//      Box(Modifier.fillMaxSize()) {
-//        Column(
-//          Modifier.align(Alignment.Center),
-//          horizontalAlignment = Alignment.CenterHorizontally
-//        ) {
-//          CircularProgressIndicator()
-//          Spacer(Modifier.height(12.dp))
-//          Text("Loading...")
-//        }
-//      }
-
-    }
-
+    composable<RootGraph> { }
     authGraph(navController)
-    mainGraph(navController)
+    mainGraph(
+      navController = navController,
+      drawerActions = drawerActions,
+      onOpenDrawer = onOpenDrawer
+    )
   }
 }
