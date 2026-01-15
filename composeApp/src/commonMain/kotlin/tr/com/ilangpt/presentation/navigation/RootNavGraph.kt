@@ -12,9 +12,9 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import kotlinx.serialization.Serializable
 import tr.com.ilangpt.domain.model.AuthState
 
@@ -22,8 +22,7 @@ import tr.com.ilangpt.domain.model.AuthState
 object RootGraph
 
 @Composable
-fun RootNavGraph(authState: AuthState) {
-  val navController = rememberNavController()
+fun RootNavGraph(authState: AuthState, navController: NavHostController) {
 
   // Global routing based on auth state
   LaunchedEffect(authState) {

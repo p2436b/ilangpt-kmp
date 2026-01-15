@@ -2,6 +2,7 @@ package tr.com.ilangpt.presentation.screen.home
 
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -56,25 +57,25 @@ fun HomeScreen(
     }
   }
 
-  ModalNavigationDrawer(
-    drawerState = drawerState,
-    drawerContent = {
-      MainDrawerContent(
-        onSettings = onSettings,
-        onProfile = onProfile,
-        historyQuery = historyQuery,
-        queryHistory = { viewModel.queryHistory(it) },
-        filteredListingHistory = filteredListingHistory,
-        onHistoryItemClick = {
-          scope.launch {
-            drawerState.close()
-          }
-          focusManager.clearFocus()
-        },
-        user = user,
-      )
-    }
-  ) {
+//  ModalNavigationDrawer(
+//    drawerState = drawerState,
+//    drawerContent = {
+//      MainDrawerContent(
+//        onSettings = onSettings,
+//        onProfile = onProfile,
+//        historyQuery = historyQuery,
+//        queryHistory = { viewModel.queryHistory(it) },
+//        filteredListingHistory = filteredListingHistory,
+//        onHistoryItemClick = {
+//          scope.launch {
+//            drawerState.close()
+//          }
+//          focusManager.clearFocus()
+//        },
+//        user = user,
+//      )
+//    }
+//  ) {
     Scaffold(
       topBar = {
         TopAppBar(
@@ -110,7 +111,6 @@ fun HomeScreen(
         modifier = Modifier
           .fillMaxSize()
           .padding(padding)
-          .padding(12.dp)
           .pointerInput(Unit) {
             detectTapGestures(
               onTap = {
@@ -118,6 +118,7 @@ fun HomeScreen(
               }
             )
           },
+        contentPadding = PaddingValues(16.dp),
         state = listState,
         verticalArrangement = Arrangement.spacedBy(8.dp)
       ) {
@@ -126,5 +127,5 @@ fun HomeScreen(
         }
       }
     }
-  }
+//  }
 }
