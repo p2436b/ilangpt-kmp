@@ -26,15 +26,24 @@ fun App() {
   val navController = rememberNavController()
   val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
   val scope = rememberCoroutineScope()
-  val focusManager = LocalFocusManager.current
 
   AppTheme {
     ModalNavigationDrawer(
       drawerState = drawerState,
       drawerContent = {
         MainDrawerContent(
-          onSettings = { navController.navigate(SettingsRoute) },
-          onProfile = { navController.navigate(ProfileRoute) },
+          onSettings = {
+            navController.navigate(SettingsRoute)
+            scope.launch {
+              drawerState.close()
+            }
+          },
+          onProfile = {
+            navController.navigate(ProfileRoute)
+            scope.launch {
+              drawerState.close()
+            }
+          },
           historyQuery = "",
           queryHistory = { /*viewModel.queryHistory(it)*/ },
           filteredListingHistory = emptyList(),
@@ -42,7 +51,6 @@ fun App() {
             scope.launch {
               drawerState.close()
             }
-            focusManager.clearFocus()
           },
           user = user,
         )

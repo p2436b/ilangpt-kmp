@@ -13,8 +13,8 @@ import tr.com.ilangpt.domain.model.AuthState
 object RootGraph
 
 @Composable
-fun RootNavGraph(authState: AuthState, navController1: NavHostController) {
-  val navController = rememberNavController()
+fun RootNavGraph(authState: AuthState, navController: NavHostController) {
+
 
   // Global routing based on auth state
   LaunchedEffect(authState) {
