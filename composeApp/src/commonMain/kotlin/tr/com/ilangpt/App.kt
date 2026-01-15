@@ -13,8 +13,13 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.koin.mp.KoinPlatform.getKoin
+import tr.com.ilangpt.database.entity.Chat
+import tr.com.ilangpt.database.entity.database.AppDatabase
 import tr.com.ilangpt.domain.repository.AuthRepository
 import tr.com.ilangpt.presentation.navigation.HomeRoute
 import tr.com.ilangpt.presentation.navigation.ProfileRoute
@@ -25,7 +30,7 @@ import tr.com.ilangpt.presentation.screen.home.MainDrawerContent
 import tr.com.ilangpt.presentation.theme.AppTheme
 
 @Composable
-fun App() {
+fun App(appDatabase: AppDatabase) {
   val authRepository: AuthRepository = getKoin().get()
   val authState by authRepository.authState.collectAsStateWithLifecycle()
   val user by authRepository.user.collectAsStateWithLifecycle()
@@ -41,6 +46,22 @@ fun App() {
   }
 
   AppTheme {
+
+    /////////////////////////////////////////////////
+    scope.launch {
+      withContext(Dispatchers.IO){
+        val listings = appDatabase.listingDao().getAll()
+        val chats = appDatabase.chatDao().getAll()
+
+        if(chats.isEmpty()){
+          appDatabase.chatDao().insert(Chat(title = "Chat 1"))
+          appDatabase.chatDao().insert(Chat(title = "Chat 2"))
+          appDatabase.chatDao().insert(Chat(title = "Chat 3"))
+        }
+      }
+    }
+    /////////////////////////////////////////////////
+
     ModalNavigationDrawer(
       drawerState = drawerState,
       gesturesEnabled = drawerEnabled,

@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import tr.com.ilangpt.data.datasource.appContext
+import tr.com.ilangpt.database.getAppDatabase
 
 class MainActivity : ComponentActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -13,8 +14,10 @@ class MainActivity : ComponentActivity() {
 
     appContext = applicationContext
 
+    val appDatabase = getAppDatabase(applicationContext)
+
     setContent {
-      App()
+      App(appDatabase)
     }
   }
 }

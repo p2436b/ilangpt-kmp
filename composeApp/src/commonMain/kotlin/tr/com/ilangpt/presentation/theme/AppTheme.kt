@@ -12,10 +12,9 @@ val lightScheme = lightColorScheme(
   onPrimary = OnPrimary,
   surface = Surface,
   onSurface = OnSurface,
-  background = Surface,
+  background = Background,
   onBackground = OnSurface,
   outline = Outline,
-  primaryContainer = Color.Red
 )
 
 val darkScheme = darkColorScheme(
@@ -23,7 +22,7 @@ val darkScheme = darkColorScheme(
   onPrimary = OnPrimaryDark,
   surface = SurfaceDark,
   onSurface = OnSurfaceDark,
-  background = SurfaceDark,
+  background = BackgroundDark,
   onBackground = OnSurfaceDark,
   outline = OutlineDark
 )
