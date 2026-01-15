@@ -1,7 +1,12 @@
 package tr.com.ilangpt.presentation.navigation
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -19,18 +24,22 @@ fun RootNavGraph(
   drawerActions: (DrawerActions?) -> Unit,
   onOpenDrawer: () -> Unit
 ) {
-  // Global routing based on auth state
+  val lastRoutedState = remember { mutableStateOf<AuthState?>(null) }
+
   LaunchedEffect(authState) {
+    if (authState == lastRoutedState.value) return@LaunchedEffect
+    lastRoutedState.value = authState
+
     when (authState) {
       AuthState.Authenticated ->
         navController.navigate(MainGraph) {
-          popUpTo(RootGraph) { inclusive = true }
+          popUpTo(0) { inclusive = true }
           launchSingleTop = true
         }
 
       AuthState.Unauthenticated ->
         navController.navigate(AuthGraph) {
-          popUpTo(RootGraph) { inclusive = true }
+          popUpTo(0) { inclusive = true }
           launchSingleTop = true
         }
 
@@ -42,7 +51,7 @@ fun RootNavGraph(
     navController = navController,
     startDestination = RootGraph
   ) {
-    composable<RootGraph> { }
+    composable<RootGraph> { Box(modifier = Modifier.fillMaxSize()) {} }
     authGraph(navController)
     mainGraph(
       navController = navController,
