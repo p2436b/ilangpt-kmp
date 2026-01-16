@@ -88,7 +88,6 @@ class HomeViewModel(
           }
         }
     }
-    _historyQuery.update { query }
   }
 
   fun updateMessages(message: ChatMessage) {
