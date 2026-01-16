@@ -2,14 +2,14 @@ package tr.com.ilangpt.di
 
 import org.koin.core.context.startKoin
 import org.koin.dsl.KoinAppDeclaration
-import org.koin.ksp.generated.module
+import org.koin.core.module.Module
 
-fun initKoin(config: KoinAppDeclaration? = null) {
+fun initKoin(
+  appModules: List<Module>,
+  config: KoinAppDeclaration? = null
+) {
   startKoin {
     config?.invoke(this)
-    modules(
-      AppModule().module,
-      UserModule().module
-    )
+    modules(appModules)
   }
 }

@@ -8,6 +8,7 @@ plugins {
   alias(libs.plugins.composeCompiler)
   alias(libs.plugins.kotlinSerialization)
   alias(libs.plugins.ksp)
+  alias(libs.plugins.androidx.room)
 }
 
 kotlin {
@@ -24,6 +25,7 @@ kotlin {
     iosTarget.binaries.framework {
       baseName = "ComposeApp"
       isStatic = true
+      linkerOpts.add("-lsqlite3")
     }
   }
 
@@ -32,6 +34,7 @@ kotlin {
       implementation(compose.preview)
       implementation(libs.androidx.activity.compose)
       implementation(libs.ktor.client.okhttp)
+      implementation(libs.androidx.room.sqlite.wrapper)
     }
     iosMain.dependencies {
       implementation(libs.ktor.client.darwin)
@@ -68,12 +71,15 @@ kotlin {
       implementation(libs.androidx.datastore.preferences)
 
       api(libs.koin.annotations)
+
+      implementation(libs.androidx.room.runtime)
+      implementation(libs.androidx.sqlite.bundled)
     }
   }
 
-  sourceSets.named("commonMain").configure {
-    kotlin.srcDir("build/generated/ksp/metadata/commonMain/kotlin")
-  }
+//  sourceSets.named("commonMain").configure {
+//    kotlin.srcDir("build/generated/ksp/metadata/commonMain/kotlin")
+//  }
 }
 
 ksp {
@@ -81,15 +87,21 @@ ksp {
   arg("KOIN_CONFIG_CHECK", "true")
 }
 
-project.tasks.withType(KotlinCompilationTask::class.java).configureEach {
-  if (name != "kspCommonMainKotlinMetadata") {
-    dependsOn("kspCommonMainKotlinMetadata")
-  }
-}
+//project.tasks.withType(KotlinCompilationTask::class.java).configureEach {
+//  if (name != "kspCommonMainKotlinMetadata") {
+//    dependsOn("kspCommonMainKotlinMetadata")
+//  }
+//}
 
 dependencies {
-  add("kspCommonMainMetadata", libs.koin.ksp.compiler)
+  add("kspCommonMainMetadata", libs.androidx.room.compiler)
+  add("kspAndroid", libs.koin.ksp.compiler)
+
+  //add("kspAndroid", libs.androidx.room.compiler)
+  //add("kspIosSimulatorArm64", libs.androidx.room.compiler)
+  //add("kspIosArm64", libs.androidx.room.compiler)
 }
+
 
 android {
   namespace = "tr.com.ilangpt"
@@ -128,7 +140,14 @@ android {
   }
 }
 
-dependencies {
-  debugImplementation(compose.uiTooling)
+room {
+  schemaDirectory("$projectDir/schemas")
+}
+
+afterEvaluate {
+  tasks.matching { it.name.startsWith("ksp") && it.name.contains("KotlinAndroid") }
+    .configureEach {
+      dependsOn(tasks.matching { it.name == "kspCommonMainKotlinMetadata" })
+    }
 }
 
